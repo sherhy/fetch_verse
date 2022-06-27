@@ -1,33 +1,62 @@
 import requests
 from bs4 import BeautifulSoup
+from consts import BOOKS_JP
 from env import CONFIGS_JP
+from fetcher import Fetcher
+from mongo import Mongo
 
+class DramaJP(Fetcher):
+    def __init__(self):
+        self.url = 'https://bible.prsi.org/ja/Player/getpage'
+        self.requests_fnc = requests.get
+        self.booklist = BOOKS_JP
+        self.configs = CONFIGS_JP
+        self.payload = self._get_headers_cookies()
+        self._mongo_init()
+    
+    def _mongo_init(self):
+        self.mongo = Mongo()
+        self.col = 'jp'
 
-def get_drama_jp(book, chapter, verse):
-    params = {
-        'book': str(book-1),
-        'chapter': str(chapter-1)
-    }
-
-    cookies = CONFIGS_JP.get("cookies")
-    headers = CONFIGS_JP.get("headers")
-
-    response = requests.get('https://bible.prsi.org/ja/Player/getpage', params=params, cookies=cookies, headers=headers)
-
-    json = response.json()
-
-    html = json.get("HTML")
-
-    soup = BeautifulSoup(html, 'html.parser')
-
-    verse_id = f'v{book:02d}{chapter:03d}{verse:03d}'
-    b_content = soup.find(id=verse_id)
-    verse_text =  b_content.get_text()
-
-    return verse_text[len(str(verse)):]
+    def _get_payload(self, book: int, chapter: int):
+        return {
+            'book': str(book-1),
+            'chapter': str(chapter-1)
+        } 
+    
+    def get_soup(self, book: int, chapter: int) -> BeautifulSoup:
+        self.payload['params'] = self._get_payload(book, chapter)
+        response = self.requests_fnc(self.url, **self.payload)
+        json = response.json()
+        html = json.get("HTML")
+        soup = BeautifulSoup(html, 'html.parser')
+        return soup
+    
+    def parse_soup(self, soup: BeautifulSoup, book: int, chapter: int, verse: int) -> str:
+        verse_id = f'v{book:02d}{chapter:03d}{verse:03d}' # 'v01001001'
+        b_content = soup.find(id=verse_id)
+        verse_text = b_content.get_text()
+        return verse_text[len(str(verse)):]
+    
+    def store_to_cache(self, soup: BeautifulSoup, book: int, chapter: int) -> None:
+        v = self.mongo.db.kr.find_one({'book': book, 'chapter': chapter}, {
+            'len': {
+                '$size': {"$objectToArray": "$verses" }
+            }
+        })
+        verses = {}
+        for i in range(1, v.get('len')+1):
+            verse = self.parse_soup(soup, book, chapter, i)
+            verses[str(i)] = verse
+        self.mongo.db[self.col].insert_one({
+            'book': book,
+            'chapter': chapter,
+            'verses': verses
+        })
 
 
 if __name__ == "__main__":
-    # get_drama_jp('v01001001')
-    v = get_drama_jp(book=3, chapter=17, verse=10)
+    Mongo.init_mongo()
+    djp = DramaJP()
+    v = djp.get_pretty_verse(book=43, chapter=1, verse=1)
     print(v)

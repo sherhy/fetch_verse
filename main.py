@@ -1,19 +1,19 @@
-from drama_jp import get_drama_jp
-from drama_kr import get_drama_kr
+from drama_jp import DramaJP
+from drama_kr import DramaKR
 from consts import BOOKS_JP, BOOKS_KR
+from mongo import Mongo
 
-def main(book, chapter, verse):
-    res = f"{BOOKS_JP[book]} {chapter}:{verse}\n"
-    jp = get_drama_jp(book, chapter, verse)
-    res += jp + '\n'
-
-    res += "\n"
-
-    res += f"{BOOKS_KR[book]} {chapter}:{verse}\n"
-    kr = get_drama_kr(book, chapter, verse)
-    res += kr + '\n'
-
-    print(res)
+def main(book, chapter, verse, verse_until = None):
+    Mongo.init_mongo()
+    dkr = DramaKR()
+    djp = DramaJP()
+    plugins = [dkr, djp]
+    if not verse_until:
+        verse_until = verse
+    for v in range(verse, verse_until+1):
+        for plugin in plugins:
+            text = plugin.get_pretty_verse(book, chapter, v)
+            print(text)
 
 if __name__ == "__main__":
     import sys
