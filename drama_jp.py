@@ -34,9 +34,10 @@ class DramaJP(Fetcher):
     
     def parse_soup(self, soup: BeautifulSoup, book: int, chapter: int, verse: int) -> str:
         verse_id = f'v{book:02d}{chapter:03d}{verse:03d}' # 'v01001001'
-        b_content = soup.find(id=verse_id)
+        b_content = soup.find('verse', id=verse_id)
         verse_text = b_content.get_text()
-        return verse_text[len(str(verse)):]
+        i = verse_text.index(str(verse)) + len(str(verse))
+        return verse_text[i:]
     
     def store_to_cache(self, soup: BeautifulSoup, book: int, chapter: int) -> None:
         v = self.mongo.db.kr.find_one({'book': book, 'chapter': chapter}, {
@@ -58,5 +59,6 @@ class DramaJP(Fetcher):
 if __name__ == "__main__":
     Mongo.init_mongo()
     djp = DramaJP()
-    v = djp.get_pretty_verse(book=43, chapter=1, verse=1)
+    soup = djp.get_soup(book=19, chapter=126)
+    v = djp.parse_soup(soup, 19, 126, 1)
     print(v)

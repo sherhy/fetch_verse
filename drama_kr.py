@@ -78,5 +78,5 @@ if __name__ == "__main__":
     # soup = dkr.get_soup(19, 135)
     # v = dkr.parse_soup(soup, 1)
     # dkr.store_to_cache(soup, 43, 1)
-    v = dkr.get_pretty_verse(19, 133, 1)
+    v = dkr.get_pretty_verse(16, 8, 1)
     print(v)
