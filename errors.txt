@@ -1,6 +1,6 @@
 buggy:
-  - korean becomes gibberish
-  - japanese error in parsing beautiful soup
+  - korean becomes gibberish --> encoding issue
+  - japanese error in parsing beautiful soup --> verse number didn't exist bc drama bible omits the verse
 
 출 39
 신 14
