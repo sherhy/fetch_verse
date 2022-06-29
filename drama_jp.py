@@ -27,28 +27,34 @@ class DramaJP(Fetcher):
     def get_soup(self, book: int, chapter: int) -> BeautifulSoup:
         self.payload['params'] = self._get_payload(book, chapter)
         response = self.requests_fnc(self.url, **self.payload)
-        json = response.json()
-        html = json.get("HTML")
+        json_obj = response.json()
+        html = json_obj.get("HTML")
         soup = BeautifulSoup(html, 'html.parser')
         return soup
     
     def parse_soup(self, soup: BeautifulSoup, book: int, chapter: int, verse: int) -> str:
         verse_id = f'v{book:02d}{chapter:03d}{verse:03d}' # 'v01001001'
-        b_content = soup.find('verse', id=verse_id)
-        verse_text = b_content.get_text()
+        content = soup.find('verse', id=verse_id)
+        if not content:
+            return ''
+        verse_text = content.get_text()
         i = verse_text.index(str(verse)) + len(str(verse))
         return verse_text[i:]
     
     def store_to_cache(self, soup: BeautifulSoup, book: int, chapter: int) -> None:
-        v = self.mongo.db.kr.find_one({'book': book, 'chapter': chapter}, {
+        v_max = self.mongo.db.kr.find_one({'book': book, 'chapter': chapter}, {
             'len': {
                 '$size': {"$objectToArray": "$verses" }
             }
-        })
+        }).get('len')
         verses = {}
-        for i in range(1, v.get('len')+1):
+        for i in range(1, v_max+1):
             verse = self.parse_soup(soup, book, chapter, i)
+            # print(f'{i} {verse[:10]}')
             verses[str(i)] = verse
+        if i != v_max:
+            print("Error: verse count doesn't match")
+
         self.mongo.db[self.col].insert_one({
             'book': book,
             'chapter': chapter,
@@ -59,6 +65,7 @@ class DramaJP(Fetcher):
 if __name__ == "__main__":
     Mongo.init_mongo()
     djp = DramaJP()
-    soup = djp.get_soup(book=19, chapter=126)
-    v = djp.parse_soup(soup, 19, 126, 1)
+    # soup = djp.get_soup(book=16, chapter=7)
+    # v = djp.parse_soup(soup, 16, 7, 1)
+    v = djp.get_pretty_verse(16, 7, 1)
     print(v)

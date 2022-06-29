@@ -50,7 +50,7 @@ class DramaKR(Fetcher):
                 pass
         return 'Error: verse not found'
     
-    def store_to_cache(self, soup: BeautifulSoup, book, chapter):
+    def store_to_cache(self, soup: BeautifulSoup, book: int, chapter: int):
         verse = 1
         verses = {}
         tables = soup.find_all('table', {'width': '98%'})
