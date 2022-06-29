@@ -1,9 +1,10 @@
 import requests
 from bs4 import BeautifulSoup
-from consts import BOOKS_KR
-from env import CONFIGS_KR
-from fetcher import Fetcher
-from mongo import Mongo
+
+from drama.consts import BOOKS_KR
+from drama.env import CONFIGS_KR
+from drama.fetcher import Fetcher
+from drama.mongo import Mongo
 
 
 class DramaKR(Fetcher):

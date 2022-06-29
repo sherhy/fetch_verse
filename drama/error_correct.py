@@ -1,9 +1,11 @@
 import json
 import time
+
 from bs4 import BeautifulSoup
-from drama_jp import DramaJP
-from drama_kr import DramaKR
-from mongo import Mongo
+
+from drama.drama_jp import DramaJP
+from drama.drama_kr import DramaKR
+from drama.mongo import Mongo
 
 Mongo.init_mongo()
 

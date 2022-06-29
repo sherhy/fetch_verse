@@ -1,8 +1,9 @@
 import time
+
 from consts import BOOK_CHAPTERS, BOOKS_JP
-from drama_jp import DramaJP
-from drama_kr import DramaKR
-from mongo import Mongo
+from drama.drama_jp import DramaJP
+from drama.drama_kr import DramaKR
+from drama.mongo import Mongo
 
 
 def main():

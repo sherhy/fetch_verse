@@ -2,9 +2,9 @@ import tornado
 import tornado.ioloop
 from tornado.web import Application, RequestHandler, url
 
-from utils.drama_jp import DramaJP
-from utils.drama_kr import DramaKR
-from utils.mongo import Mongo
+from drama.drama_jp import DramaJP
+from drama.drama_kr import DramaKR
+from drama.mongo import Mongo
 
 plugins = []
 
@@ -52,13 +52,4 @@ def fetch_verses(book, chapter, verse, verse_until=None):
 
 
 if __name__ == "__main__":
-    # Mongo.init_mongo()
-    # load_plugins()
-    # book = 1
-    # chapter = 1
-    # verse = 1
-    # verse_until = None
-    # verses = '\n'.join(fetch_verses(book, chapter, verse, verse_until))
-    # v = tornado.escape.to_unicode(verses) # just have to echo -e `curl $URL`
-    # print(v)
     main()
