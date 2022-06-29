@@ -29,8 +29,9 @@ class DramaKR(Fetcher):
     def get_soup(self, book: int, chapter: int) -> BeautifulSoup:
         self.payload['data'] = self._get_payload(book, chapter)
         response = self.requests_fnc(self.url, **self.payload)
+        response.encoding = 'EUC-KR'
 
-        soup = BeautifulSoup(response.content, 'html.parser')
+        soup = BeautifulSoup(response.text, 'html.parser')
         return soup
     
     def parse_soup(self, soup: BeautifulSoup, verse: int, **args) -> str:
@@ -75,7 +76,7 @@ class DramaKR(Fetcher):
 if __name__ == "__main__":
     Mongo.init_mongo()
     dkr = DramaKR()
-    # soup = dkr.get_soup(19, 135)
+    # soup = dkr.get_soup(2, 38)
     # v = dkr.parse_soup(soup, 1)
     # dkr.store_to_cache(soup, 43, 1)
     v = dkr.get_pretty_verse(16, 8, 1)

@@ -19,4 +19,4 @@ if __name__ == "__main__":
     # print(len(BOOK_CHAPTERS))
     # print(BOOKS_KR[book])
     # print(BOOKS_JP[book])
-    print(BOOKS_JP.index('使'))
+    print(BOOKS_JP.index('ヨハ'))
