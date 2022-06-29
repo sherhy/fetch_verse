@@ -1,0 +1,9 @@
+{
+  apps : [
+    {
+      name : "bible_api",
+      script : "main.py",
+      interpreter: "python3"
+    }
+  ]
+}
