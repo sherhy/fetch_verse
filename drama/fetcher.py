@@ -36,14 +36,18 @@ class Fetcher(ABC):
         pass
 
     def is_valid_verse(self, book, chapter, verse):
+        v_max = self.get_max_verse(book, chapter)
+        return v_max >= verse
+
+    def get_max_verse(self, book, chapter):
         try:
             v_max = self.mongo.db.kr.find_one(
                 {"book": book, "chapter": chapter},
                 {"len": {"$size": {"$objectToArray": "$verses"}}},
             ).get("len")
+            return v_max
         except AttributeError:
-            return False  # chapter doesn't exist
-        return v_max >= verse
+            return 0  # chapter doesn't exist
 
     def get_verse(self, book: int, chapter: int, verse: int):
         if not self.is_valid_verse(book, chapter, verse):

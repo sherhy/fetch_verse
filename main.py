@@ -41,13 +41,21 @@ class FetchHandler(RequestHandler):
         self.finish({"text": verses})
 
 
-def fetch_verses(book, chapter, verse, verse_until=None):
+def fetch_verses(book, chapter, verse, verse_until=0):
     global plugins
+    v_max = plugins[0].get_max_verse(book, chapter)
+    if verse > v_max:
+        verse = v_max
     if not verse_until:
-        verse_until = verse
+        verse_until = verse  # verse_until doesn't exist
+    elif verse_until > v_max:
+        verse_until = v_max  # verse_until is too large
+
     for v in range(verse, verse_until + 1):
         for plugin in plugins:
             text = plugin.get_pretty_verse(book, chapter, v)
+            if not text:
+                continue
             yield text
 
 
