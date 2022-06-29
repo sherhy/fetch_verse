@@ -35,7 +35,19 @@ class Fetcher(ABC):
         """parses soup and stores all verses in mongo"""
         pass
 
+    def is_valid_verse(self, book, chapter, verse):
+        try:
+            v_max = self.mongo.db.kr.find_one(
+                {"book": book, "chapter": chapter},
+                {"len": {"$size": {"$objectToArray": "$verses"}}},
+            ).get("len")
+        except AttributeError:
+            return False  # chapter doesn't exist
+        return v_max >= verse
+
     def get_verse(self, book: int, chapter: int, verse: int):
+        if not self.is_valid_verse(book, chapter, verse):
+            return ""
         cache = self.check_cache(book, chapter)
         if not cache:
             # set params
@@ -46,6 +58,8 @@ class Fetcher(ABC):
 
     def get_pretty_verse(self, book: int, chapter: int, verse: int):
         v = self.get_verse(book, chapter, verse)
+        if not v:
+            return ""
         res = f"{self.booklist[book]} {chapter}:{verse}\n"
         res += v + "\n"
         return res

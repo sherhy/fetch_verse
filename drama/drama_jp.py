@@ -61,5 +61,5 @@ if __name__ == "__main__":
     djp = DramaJP()
     # soup = djp.get_soup(book=16, chapter=7)
     # v = djp.parse_soup(soup, 16, 7, 1)
-    v = djp.get_pretty_verse(43, 5, 1)
+    v = djp.get_pretty_verse(1, 1, 100)
     print(v)
