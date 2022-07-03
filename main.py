@@ -48,7 +48,7 @@ def fetch_verses(book: int, chapter: int, verse: int, verse_until: int = 0):
         verse = v_max
     if not verse_until:
         verse_until = verse  # verse_until doesn't exist
-    elif verse_until > v_max:
+    elif verse_until > v_max or verse_until < verse:
         verse_until = v_max  # verse_until is too large
 
     for v in range(verse, verse_until + 1):
