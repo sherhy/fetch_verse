@@ -1,3 +1,5 @@
+from typing import Dict
+
 import requests
 from bs4 import BeautifulSoup
 
@@ -16,11 +18,11 @@ class DramaKR(Fetcher):
         self.payload = self._get_headers_cookies()
         self._mongo_init()
 
-    def _mongo_init(self):
+    def _mongo_init(self) -> None:
         self.col = "kr"
         self.mongo = Mongo()
 
-    def _get_payload(self, book: int, chapter: int):
+    def _get_payload(self, book: int, chapter: int) -> Dict[str, str]:
         return {"s": "r", "kd": "104", "vl": str(book), "ct": str(chapter)}
 
     def get_soup(self, book: int, chapter: int) -> BeautifulSoup:
@@ -43,7 +45,7 @@ class DramaKR(Fetcher):
                 pass
         return "Error: verse not found"
 
-    def store_to_cache(self, soup: BeautifulSoup, book: int, chapter: int):
+    def store_to_cache(self, soup: BeautifulSoup, book: int, chapter: int) -> None:
         verse = 1
         verses = {}
         tables = soup.find_all("table", {"width": "98%"})

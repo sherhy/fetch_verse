@@ -41,7 +41,7 @@ class FetchHandler(RequestHandler):
         self.finish({"text": verses})
 
 
-def fetch_verses(book, chapter, verse, verse_until=0):
+def fetch_verses(book: int, chapter: int, verse: int, verse_until: int = 0):
     global plugins
     v_max = plugins[0].get_max_verse(book, chapter)
     if verse > v_max:

@@ -8,7 +8,7 @@ class Mongo:
         return cls.instance
 
     @staticmethod
-    def init_mongo():
+    def init_mongo() -> None:
         mongo = Mongo()
         mongo.client = MongoClient("mongodb://localhost:27017")
         mongo.db = mongo.client.drama_bible

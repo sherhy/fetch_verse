@@ -1,3 +1,5 @@
+from typing import Dict
+
 import requests
 from bs4 import BeautifulSoup
 
@@ -16,11 +18,11 @@ class DramaJP(Fetcher):
         self.payload = self._get_headers_cookies()
         self._mongo_init()
 
-    def _mongo_init(self):
+    def _mongo_init(self) -> None:
         self.mongo = Mongo()
         self.col = "jp"
 
-    def _get_payload(self, book: int, chapter: int):
+    def _get_payload(self, book: int, chapter: int) -> Dict[str, str]:
         return {"book": str(book - 1), "chapter": str(chapter - 1)}
 
     def get_soup(self, book: int, chapter: int) -> BeautifulSoup:
