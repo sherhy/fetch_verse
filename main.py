@@ -1,3 +1,5 @@
+import logging
+
 import tornado
 import tornado.ioloop
 from tornado.web import Application, RequestHandler, url
@@ -6,6 +8,8 @@ from drama.drama_jp import DramaJP
 from drama.drama_kr import DramaKR
 from drama.mongo import Mongo
 
+logging.basicConfig(level=logging.INFO, format="%(asctime)s:%(levelname)s: %(message)s")
+logger = logging.getLogger(__name__)
 plugins = []
 
 
@@ -23,7 +27,7 @@ def load_plugins():
     global plugins
     dkr = DramaKR()
     djp = DramaJP()
-    plugins = [dkr, djp]
+    plugins = [djp, dkr]
 
 
 class FetchHandler(RequestHandler):
